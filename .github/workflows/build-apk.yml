@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -26,16 +26,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Prepare Android SDK
-        run: |
-          SDKMANAGER="/usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager"
-          yes | "$SDKMANAGER" --sdk_root=/usr/local/lib/android/sdk --licenses || true
-          "$SDKMANAGER" --sdk_root=/usr/local/lib/android/sdk "platforms;android-36" "build-tools;35.0.0"
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+
+      - name: Check Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls -la "$ANDROID_HOME/platforms/android-36"
+          ls -la "$ANDROID_HOME/build-tools/35.0.0"
 
       - name: Build APK
         working-directory: project
